@@ -204,13 +204,16 @@
                 console.log(data);
                 state = "update";
 
-                $('#id').val(data.id);
-                $('#Kode_Penjualan').val(data.Kode_Penjualan);
-                $('#Tanggal_Jual').val(data.Tanggal_Jual);
-                $('#Nama_Pelanggan').val(data.Nama_Pelanggan);
-                $('#Barang_id').val(data.Barang_id);
-                $('#Kategori_id').val(data.Kategori_id);
-                $('#Jumlah').val(data.Jumlah);
+                $('#id').val(data.penjualan.id);
+                $('#Kode_Penjualan').val(data.penjualan.Kode_Penjualan);
+                $('#Tanggal_Jual').val(data.penjualan.Tanggal_Jual);
+                $('select[name="Sub_id"]').append(data.sub);
+                $('#kat').val(data.penjualan.Kategori_id)
+                $('#sub').val(data.penjualan.Sub_id);
+                $('#Nama_Pelanggan').val(data.penjualan.Nama_Pelanggan);
+                $('#Barang_id').append(data.bar);
+                $('#Barang_id').val(data.penjualan.Barang_id);
+                $('#Jumlah').val(data.penjualan.Jumlah);
                 $('.select-dua').select2();
 
 
@@ -223,6 +226,8 @@
 
           $(document).on('hide.bs.modal','#jualModal', function() {
             $('#jual_table').DataTable().ajax.reload();
+            $('#sub').find('option').remove();
+            $('#Barang_id').find('option').remove();
           });
 
           //proses delete data

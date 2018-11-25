@@ -8,6 +8,7 @@ use Yajra\DataTables\Html\Builder;
 use Yajra\DataTables\DataTables;
 use App\Barang;
 use App\Kategori;
+use App\SubKategori;
 use DB;
 class PenjualanController extends Controller
 {
@@ -56,7 +57,8 @@ class PenjualanController extends Controller
      */
     public function create()
     {
-        //
+        
+        
     }
 
     /**
@@ -128,7 +130,21 @@ class PenjualanController extends Controller
     public function edit($id)
     {
         $penjualan = Penjualan::findOrFail($id);
-        return $penjualan;
+        $subkat = SubKategori::where('parent_id',$penjualan->Kategori_id)->get();
+        $sub = '';
+        foreach ($subkat as $key => $value) {
+            $sub .= '<option value="'.$value->id.'">'.$value->name.'</option>';
+        }
+        $merkbar = Barang::where('id',$penjualan->Barang_id)->get();
+        $bar = '';
+        foreach ($merkbar as $key => $value) {
+
+            $bar .= '<option value="'.$value->id.'">'.$value->Merk.'</option>';
+        }
+        $data['penjualan']=$penjualan;
+        $data['sub']=$sub;
+        $data['bar']=$bar;
+        return $data;
     }
 
     /**
@@ -163,9 +179,20 @@ class PenjualanController extends Controller
         $data->Kategori_id = $request->Kategori_id;
         $data->Sub_id = $request->Sub_id;
         $data->Barang_id = $request->Barang_id;
-
         $baru = Barang::where('id', $data->Barang_id)->first();
-        if ($request->Jumlah <= $baru->Stok) 
+        if ($data->Jumlah == $request->Jumlah) 
+        {
+             $data->Jumlah = $request->Jumlah;
+             $Jumlah = Penjualan::find($id);
+             $Jumlah->Jumlah = ($Jumlah->Jumlah - $request->Jumlah) + $request->Jumlah;
+             $Jumlah->save();
+
+              return response()->json([
+                'success'=>true,
+                'message'=>'Data Berhasil Di Update!'
+            ]);   
+        }
+        elseif ($request->Jumlah <= $baru->Stok) 
         {
              $data->Jumlah = $request->Jumlah;
              $Jumlah = Penjualan::find($id);
@@ -183,26 +210,26 @@ class PenjualanController extends Controller
                 'message'=>'Data Berhasil Di Update!'
             ]);   
         }
+       
         elseif ($request->Jumlah >= $baru->Stok) 
         {
              
              $stok = Barang::where('id', $data->Barang_id)->first();
              $stok->Stok =  ($stok->Stok + $data->Jumlah) - $request->Jumlah;
              $stok->save();
-             $data->Jumlah = $request->Jumlah;
-
+ 
              $Jumlah = Penjualan::find($id);
              $Jumlah->Jumlah = $Jumlah->Jumlah - $request->Jumlah;
 
              $Jumlah->save();
              $data->Total_Bayar = $data->Jumlah*$baru->Harga_Satuan;
-             $data->save(); 
+             $data->save()  ; 
              return response()->json([
                 'success'=>true,
                 'message'=>'Data Berhasil Di Update!'
                  ]); 
         }
-            return response()->json([
+         return response()->json([
                 'error'=>true,
             ]);
         
@@ -222,6 +249,41 @@ class PenjualanController extends Controller
                     ->where("parent_id",$id)
                     ->pluck("name","id");
         return json_encode($sub);
+    }
+
+    public function AjaxJual($id)
+    {
+        $sub = DB::table("sub_kategoris")
+        ->join('barangs','sub_kategoris.id','=','barangs.Sub_id')
+        ->where("sub_kategoris.parent_id",$id)
+        ->pluck("sub_kategoris.name","sub_kategoris.id");
+
+        $id_sub = DB::table("sub_kategoris")
+        ->join('barangs','sub_kategoris.id','=','barangs.Sub_id')
+        ->where("sub_kategoris.parent_id",$id)
+        ->orderBy("barangs.id","asc")
+        ->first();
+
+        $merk = DB::table("sub_kategoris")
+        ->join('barangs','sub_kategoris.id','=','barangs.Sub_id')
+        ->where("barangs.Sub_id",$id_sub->Sub_id)
+        ->pluck("barangs.Merk","barangs.id");
+
+        $data['sub']=$sub;
+        $data['merk']=$merk;
+        $data['id_sub']=$id_sub;
+        return json_encode($data);
+    }
+
+    public function jualbarang($id)
+    {
+
+        $jual = DB::table("sub_kategoris")
+        ->join('barangs','sub_kategoris.id','barangs.Sub_id')
+        ->where("barangs.Sub_id",$id)
+        ->orderBy("barangs.id","asc")
+        ->pluck("barangs.Merk","barangs.id");
+        return json_encode($jual);
     }
 
     public function destroy(Penjualan $penjualan)

@@ -49,15 +49,9 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a href="kategori" class="nav-link">
+                <a href="pinjam" class="nav-link">
                   <i class="fa fa-circle-o nav-icon"></i>
-                  <p>Kategori</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="subkategori" class="nav-link">
-                  <i class="fa fa-circle-o nav-icon"></i>
-                  <p>subkategori</p>
+                  <p>PinjamBuku</p>
                 </a>
               </li>
             </ul>

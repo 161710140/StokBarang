@@ -6,6 +6,7 @@ use DB;
 use App\Barang;
 use App\Suplier;
 use App\Kategori;
+use App\SubKategori;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Html\Builder;
 use Yajra\DataTables\DataTables;
@@ -110,7 +111,14 @@ class BarangController extends Controller
     public function edit($id)
     {
         $barang = Barang::findOrFail($id);
-        return $barang;
+        $subkat = SubKategori::where('parent_id',$barang->Kategori_id)->get();
+        $sub = '';
+        foreach ($subkat as $key => $value) {
+            $sub .= '<option value="'.$value->id.'">'.$value->name.'</option>';
+        }
+        $data['barang']=$barang;
+        $data['sub']=$sub;
+        return $data;
     }
 
     /**

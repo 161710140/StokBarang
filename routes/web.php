@@ -20,7 +20,8 @@ Route::get('subcat',function(){
 	->get();
 });
 Route::get('myform/ajax/{id}',array('as'=>'myform.ajax','uses'=>'BarangController@myformAjax'));
-Route::get('myform/ajax/{id}',array('as'=>'myform.ajax','uses'=>'PenjualanController@myformAjax'));
+Route::get('myform/ajax/pen/{id}',array('as'=>'myform.ajax','uses'=>'PenjualanController@jualbarang'));
+Route::get('myform/ajax/jual/{id}',array('as'=>'myform.ajax','uses'=>'PenjualanController@AjaxJual'));
 //suplier
 Route::get('/jsondata','SuplierController@json');
 Route::resource('/indexsuplier','SuplierController');
@@ -60,4 +61,4 @@ Route::get('json_sub','SubKategoriController@json');
 Route::post('storesub', 'SubKategoriController@store');
 Route::post('sub/edit/{id}', 'SubKategoriController@update');
 Route::get('sub/getedit/{id}','SubKategoriController@edit');
-Route::get('ajaxdata/removedatasub','SubKategoriController@removedata')->name('ajaxdata.removedatasub');
+Route::get('ajaxdata/removedatasub','SubKategoriController@removedata')->name('ajaxdata.removedatasub');	

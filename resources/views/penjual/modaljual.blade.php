@@ -60,13 +60,10 @@
 
                      <label>Barang</label>
                      <select class="form-control select-dua" name="Barang_id" id="Barang_id" style="width: 468px">
-                     	<option disabled selected>Pilih Barang</option>
-                     	@foreach($barang as $data)
-                     	<option value="{{$data->id}}">{{$data->Merk}}</option>
-                     	@endforeach
                      </select>
                      <span class="help-block has-error Nama_Barang_error">
-                  </div>
+                  </div>  
+                   
 
                   <div class="form-group">
                   	<label>Jumlah</label>
@@ -87,22 +84,50 @@
             var kategori = $(this).val();
             if(kategori) {
                 $.ajax({
-                    url: '/myform/ajax/'+kategori,
+                    url: '/myform/ajax/jual/'+kategori,
                     type: "GET",
                     dataType: "json",
                     success:function(data) {
+                      console.log(data.id_sub);
+
+                        $('select[name="Sub_id"]').empty();
+                        $.each(data.sub, function(key, value) {
+                            $('select[name="Sub_id"]').append('<option value="'+ key +'">'+ value +'</option>');
+                        });
+
+                        $('#Barang_id').empty();
+                        $.each(data.merk, function(key, value) {
+                            $('#Barang_id').append('<option value="'+ key +'">'+ value +'</option>');
+                        });
 
                         
-                        $('select[name="Sub_id"]').empty();
+
+                    }
+                });
+            }else{
+                $('select[name="Sub_id"]','#Barang_id').empty();
+            }
+        });
+          $('select[name="Sub_id"]').on('change', function() {
+            var sub = $(this).val();
+            console.log('A');
+            if(sub) {
+                $.ajax({
+                    url: '/myform/ajax/pen/'+sub,
+                    type: "GET",
+                    dataType: "json",
+                    success:function(data) 
+                    {
+                        $('select[name="Barang_id"]').empty();
                         $.each(data, function(key, value) {
-                            $('select[name="Sub_id"]').append('<option value="'+ key +'">'+ value +'</option>');
+                            $('select[name="Barang_id"]').append('<option value="'+ key +'">'+ value +'</option>');
                         });
 
 
                     }
                 });
             }else{
-                $('select[name="Sub_id"]').empty();
+                $('select[name="Barang_id"]').empty();
             }
         });
     });

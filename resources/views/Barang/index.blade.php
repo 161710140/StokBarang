@@ -194,13 +194,15 @@
           console.log(data);
           state = "update";
 
-          $('#id').val(data.id);
-          $('#suplier_id').val(data.suplier_id);
-          $('#Kategori_id').val(data.Kategori_id);
-          $('#Nama_Barang').val(data.Nama_Barang);
-          $('#Merk').val(data.Merk);
-          $('#Harga_Satuan').val(data.Harga_Satuan);
-          $('#Stok').val(data.Stok);
+          $('#id').val(data.barang.id);
+          $('#suplier_id').val(data.barang.suplier_id);
+          $('#kat').val(data.barang.Kategori_id);
+          $('select[name="Sub_id"]').append(data.sub);
+          $('#sub').val(data.barang.Sub_id);
+          $('#Nama_Barang').val(data.barang.Nama_Barang);
+          $('#Merk').val(data.barang.Merk);
+          $('#Harga_Satuan').val(data.barang.Harga_Satuan);
+          $('#Stok').val(data.barang.Stok);
           $('.select-dua').select2();
 
 
@@ -213,6 +215,7 @@
 
     $(document).on('hide.bs.modal','#barangModal', function() {
       $('#bar_table').DataTable().ajax.reload();
+      $('#sub').find('option').remove();
     });
 
     //proses delete data

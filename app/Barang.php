@@ -26,4 +26,9 @@ class Barang extends Model
     {
         return $this->belongsTo('App\SubKategori','Sub_id');
     }
+
+    public function childs()
+    {
+        return $this->hasOne('App\Penjualan','jual_id');
+    }
 }
